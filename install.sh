@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# Prompted (برومتد) - Universal Installer for Linux & macOS
+# Prompted - Universal Installer for Linux & macOS
 # GitHub: https://github.com/hywsf8883-dev/promptad-tool.git
 # ==============================================================================
 
@@ -18,20 +18,19 @@ TARGET_PLATFORM="${1:-}"
 clear 2>/dev/null || true
 echo -e "${CYAN}"
 echo "=============================================================="
-echo "      🚀 Prompted Installer | مثبت أداة برومتد                "
+echo "      Prompted Installer | Antigravity & Claude Code          "
 echo "    Repository: https://github.com/hywsf8883-dev/promptad-tool"
 echo "=============================================================="
 echo -e "${NC}"
 
 if [ -z "$TARGET_PLATFORM" ]; then
-  echo -e "${YELLOW}اختر المنصة التي تريد تثبيت الأداة عليها:${NC}"
-  echo -e "${GRAY}Select the platform you want to install Prompted for:${NC}\n"
-  echo -e "  [1] Google Antigravity فقط"
-  echo -e "  [2] Claude Code فقط"
-  echo -e "  ${GREEN}[3] كلاهما معاً (Both Antigravity & Claude Code) - [موصى به]${NC}"
-  echo -e "  [4] إلغاء (Cancel)\n"
+  echo -e "${YELLOW}Select the platform you want to install Prompted for:${NC}\n"
+  echo -e "  [1] Google Antigravity only"
+  echo -e "  [2] Claude Code only"
+  echo -e "  ${GREEN}[3] Both (Antigravity & Claude Code) [Recommended]${NC}"
+  echo -e "  [4] Cancel\n"
 
-  read -r -p "أدخل رقم اختيارك (Enter choice) [1-4] (Default: 3): " input_choice
+  read -r -p "Enter your choice [1-4] (Default: 3): " input_choice
   input_choice="${input_choice:-3}"
 
   case "$input_choice" in
@@ -39,20 +38,19 @@ if [ -z "$TARGET_PLATFORM" ]; then
     2) TARGET_PLATFORM="claude" ;;
     3) TARGET_PLATFORM="both" ;;
     4)
-      echo -e "${RED}❌ تم إلغاء التثبيت.${NC}"
+      echo -e "${RED}[-] Installation cancelled.${NC}"
       exit 0
       ;;
     *) TARGET_PLATFORM="both" ;;
   esac
 fi
 
-echo -e "\n${CYAN}[*] جاري تجهيز الملفات وتثبيت الأداة لـ: $TARGET_PLATFORM...${NC}"
+echo -e "\n${CYAN}[*] Setting up Prompted for: $TARGET_PLATFORM...${NC}"
 
 USER_HOME="$HOME"
 TEMP_DIR=""
 SOURCE_DIR=""
 
-# Check local repo
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd || true)"
 if [ -n "$SCRIPT_DIR" ] && [ -d "$SCRIPT_DIR/prompts" ]; then
   SOURCE_DIR="$SCRIPT_DIR"
@@ -61,7 +59,7 @@ elif [ -d "$(pwd)/prompts" ]; then
 fi
 
 if [ -z "$SOURCE_DIR" ]; then
-  echo -e "${CYAN}[*] جاري تحميل ملفات الأداة من GitHub...${NC}"
+  echo -e "${CYAN}[*] Downloading latest files from GitHub...${NC}"
   TEMP_DIR=$(mktemp -d)
   ZIP_URL="https://github.com/hywsf8883-dev/promptad-tool/archive/refs/heads/main.zip"
   curl -fsSL "$ZIP_URL" -o "$TEMP_DIR/promptad-tool.zip"
@@ -80,7 +78,7 @@ if [ -d "$SOURCE_DIR/prompts" ]; then
       cp "$file" "$GLOBAL_PROMPTS_DIR/$fname"
     fi
   done
-  echo -e "${GREEN}[✔] تم تجهيز مكتبة البرومات في: $GLOBAL_PROMPTS_DIR${NC}"
+  echo -e "${GREEN}[+] Global prompts library configured at: $GLOBAL_PROMPTS_DIR${NC}"
 fi
 
 # 2. Antigravity Install
@@ -88,7 +86,7 @@ if [ "$TARGET_PLATFORM" = "antigravity" ] || [ "$TARGET_PLATFORM" = "both" ]; th
   GEMINI_CONFIG_DIR="$USER_HOME/.gemini/config"
   mkdir -p "$GEMINI_CONFIG_DIR/plugins/prompted"
   mkdir -p "$GEMINI_CONFIG_DIR/skills/prompted"
-  
+
   cp -r "$SOURCE_DIR/plugins/prompted/"* "$GEMINI_CONFIG_DIR/plugins/prompted/" 2>/dev/null || true
   cp -r "$SOURCE_DIR/.agents/skills/prompted/"* "$GEMINI_CONFIG_DIR/skills/prompted/" 2>/dev/null || true
 
@@ -99,7 +97,7 @@ if [ "$TARGET_PLATFORM" = "antigravity" ] || [ "$TARGET_PLATFORM" = "both" ]; th
     fi
   done
 
-  echo -e "${GREEN}[✔] تم تثبيت Prompted في Google Antigravity بنجاح!${NC}"
+  echo -e "${GREEN}[+] Google Antigravity: Prompted plugin & skills installed successfully!${NC}"
 fi
 
 # 3. Claude Code Install
@@ -108,7 +106,7 @@ if [ "$TARGET_PLATFORM" = "claude" ] || [ "$TARGET_PLATFORM" = "both" ]; then
   mkdir -p "$CLAUDE_COMMANDS_DIR"
   if [ -d "$SOURCE_DIR/.claude/commands" ]; then
     cp "$SOURCE_DIR/.claude/commands/"*.md "$CLAUDE_COMMANDS_DIR/" 2>/dev/null || true
-    echo -e "${GREEN}[✔] تم تثبيت أوامر Prompted في Claude Code بنجاح!${NC}"
+    echo -e "${GREEN}[+] Claude Code: Prompted slash commands installed successfully!${NC}"
   fi
 fi
 
@@ -118,14 +116,14 @@ if [ -n "$TEMP_DIR" ] && [ -d "$TEMP_DIR" ]; then
 fi
 
 echo -e "\n${GRAY}==============================================================${NC}"
-echo -e "${GREEN}🎉 تم التثبيت بنجاح! (Installation Completed Successfully)${NC}"
+echo -e "${GREEN}[SUCCESS] Installation Complete!${NC}"
 echo -e "${GRAY}==============================================================${NC}"
-echo -e "${CYAN}💡 للتشغيل الآن:${NC}"
+echo -e "${CYAN}How to use Prompted:${NC}"
 if [ "$TARGET_PLATFORM" = "antigravity" ] || [ "$TARGET_PLATFORM" = "both" ]; then
-  echo -e "  - في Google Antigravity: اكتب امر /prompted"
+  echo -e "  * In Google Antigravity: type /prompted"
 fi
 if [ "$TARGET_PLATFORM" = "claude" ] || [ "$TARGET_PLATFORM" = "both" ]; then
-  echo -e "  - في Claude Code: اكتب امر /prompted"
+  echo -e "  * In Claude Code: type /prompted"
 fi
-echo -e "  - من التيرمينال: node bin/prompted.js list"
+echo -e "  * From Terminal: node bin/prompted.js list"
 echo -e "${GRAY}==============================================================\n${NC}"

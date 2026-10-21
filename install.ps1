@@ -1,56 +1,42 @@
-﻿# ==============================================================================
-# Prompted (برومتد) - Universal Installer for Windows
-# GitHub: https://github.com/hywsf8883-dev/promptad-tool.git
-# ==============================================================================
-
-param (
-    [Parameter(Position=0)]
-    [string]$TargetPlatform = ""
-)
-
-[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-$OutputEncoding = [System.Text.Encoding]::UTF8
+$Host.UI.RawUI.WindowTitle = "Prompted Installer"
 
 Write-Host ""
 Write-Host "==============================================================" -ForegroundColor Cyan
-Write-Host "      🚀 Prompted Installer | مثبت أداة برومتد                " -ForegroundColor Cyan
+Write-Host "      Prompted Installer | Antigravity & Claude Code          " -ForegroundColor Cyan
 Write-Host "    Repository: https://github.com/hywsf8883-dev/promptad-tool" -ForegroundColor DarkCyan
 Write-Host "==============================================================" -ForegroundColor Cyan
 Write-Host ""
+Write-Host "Select the platform you want to install Prompted for:" -ForegroundColor Yellow
+Write-Host ""
+Write-Host "  [1] Google Antigravity only" -ForegroundColor White
+Write-Host "  [2] Claude Code only" -ForegroundColor White
+Write-Host "  [3] Both (Antigravity & Claude Code) [Recommended]" -ForegroundColor Green
+Write-Host "  [4] Cancel" -ForegroundColor Gray
+Write-Host ""
 
-# Determine target platform if not passed as parameter
-if (-not $TargetPlatform) {
-    Write-Host "اختر المنصة التي تريد تثبيت الأداة عليها:" -ForegroundColor Yellow
-    Write-Host "Select the platform you want to install Prompted for:" -ForegroundColor Gray
-    Write-Host ""
-    Write-Host "  [1] Google Antigravity فقط" -ForegroundColor White
-    Write-Host "  [2] Claude Code فقط" -ForegroundColor White
-    Write-Host "  [3] كلاهما معاً (Both Antigravity and Claude Code) - [موصى به]" -ForegroundColor Green
-    Write-Host "  [4] إلغاء (Cancel)" -ForegroundColor Gray
-    Write-Host ""
-    
-    $inputChoice = Read-Host "أدخل رقم اختيارك (Enter choice) [1-4] (Default: 3)"
-    if (-not $inputChoice) { $inputChoice = "3" }
-    
-    switch ($inputChoice.Trim()) {
-        "1" { $TargetPlatform = "antigravity" }
-        "2" { $TargetPlatform = "claude" }
-        "3" { $TargetPlatform = "both" }
-        "4" {
-            Write-Host "❌ تم إلغاء التثبيت. (Installation cancelled)" -ForegroundColor Red
-            exit 0
-        }
-        default { $TargetPlatform = "both" }
+$inputChoice = Read-Host "Enter your choice [1-4] (Default: 3)"
+if ([string]::IsNullOrWhiteSpace($inputChoice)) { $inputChoice = "3" }
+
+switch ($inputChoice.Trim()) {
+    "1" { $targetPlatform = "antigravity" }
+    "2" { $targetPlatform = "claude" }
+    "3" { $targetPlatform = "both" }
+    "4" {
+        Write-Host "[-] Installation cancelled." -ForegroundColor Yellow
+        return
     }
+    default { $targetPlatform = "both" }
 }
 
 Write-Host ""
-Write-Host "[*] جاري تجهيز الملفات وتثبيت الأداة لـ: $TargetPlatform..." -ForegroundColor Cyan
+Write-Host "[*] Setting up Prompted for: $targetPlatform..." -ForegroundColor Cyan
 
 $userHome = $env:USERPROFILE
 $tempDownloadDir = $null
+$tempZip = $null
 $sourceDir = $null
 
+# Check if local files exist
 $localCandidates = @($PSScriptRoot, (Get-Location).Path)
 foreach ($cand in $localCandidates) {
     if ($cand -and (Test-Path (Join-Path $cand "prompts"))) {
@@ -60,17 +46,17 @@ foreach ($cand in $localCandidates) {
 }
 
 if (-not $sourceDir) {
-    Write-Host "[*] جاري تحميل ملفات الأداة من GitHub..." -ForegroundColor Cyan
+    Write-Host "[*] Downloading latest files from GitHub..." -ForegroundColor Cyan
     $zipUrl = "https://github.com/hywsf8883-dev/promptad-tool/archive/refs/heads/main.zip"
     $tempZip = Join-Path $env:TEMP "promptad-tool-main.zip"
     $tempDownloadDir = Join-Path $env:TEMP "promptad-tool-extract"
-    
+
     if (Test-Path $tempDownloadDir) { Remove-Item -Path $tempDownloadDir -Recurse -Force -ErrorAction SilentlyContinue }
     if (Test-Path $tempZip) { Remove-Item -Path $tempZip -Force -ErrorAction SilentlyContinue }
-    
+
     Invoke-WebRequest -Uri $zipUrl -OutFile $tempZip -UseBasicParsing
     Expand-Archive -Path $tempZip -DestinationPath $tempDownloadDir -Force
-    
+
     $sourceDir = Join-Path $tempDownloadDir "promptad-tool-main"
     if (-not (Test-Path $sourceDir)) {
         $sub = Get-ChildItem -Path $tempDownloadDir -Directory | Select-Object -First 1
@@ -91,21 +77,21 @@ if (Test-Path $sourcePromptsDir) {
             Copy-Item -Path $_.FullName -Destination $destFile -Force
         }
     }
-    Write-Host "[✔] تم تجهيز مكتبة البرومات في: $globalPromptsDir" -ForegroundColor Green
+    Write-Host "[+] Global prompts library configured at: $globalPromptsDir" -ForegroundColor Green
 }
 
 # 2. Install for Google Antigravity
-if ($TargetPlatform -eq "antigravity" -or $TargetPlatform -eq "both") {
+if ($targetPlatform -eq "antigravity" -or $targetPlatform -eq "both") {
     $geminiConfigDir = Join-Path $userHome ".gemini\config"
     $geminiPluginsDir = Join-Path $geminiConfigDir "plugins\prompted"
     $geminiSkillsDir = Join-Path $geminiConfigDir "skills\prompted"
-    
+
     try {
         if (-not (Test-Path $geminiPluginsDir)) {
             New-Item -ItemType Directory -Path $geminiPluginsDir -Force | Out-Null
         }
         Copy-Item -Path (Join-Path $sourceDir "plugins\prompted\*") -Destination $geminiPluginsDir -Recurse -Force
-        
+
         if (-not (Test-Path $geminiSkillsDir)) {
             New-Item -ItemType Directory -Path $geminiSkillsDir -Force | Out-Null
         }
@@ -120,15 +106,15 @@ if ($TargetPlatform -eq "antigravity" -or $TargetPlatform -eq "both") {
                 Copy-Item -Path (Join-Path $src "*") -Destination $dest -Recurse -Force
             }
         }
-        
-        Write-Host "[✔] تم تثبيت Prompted في Google Antigravity بنجاح!" -ForegroundColor Green
+
+        Write-Host "[+] Google Antigravity: Prompted plugin & skills installed successfully!" -ForegroundColor Green
     } catch {
-        Write-Host "[!] تحذير أثناء تثبيت Antigravity: $_" -ForegroundColor Yellow
+        Write-Host "[!] Warning while installing to Antigravity: $_" -ForegroundColor Yellow
     }
 }
 
 # 3. Install for Claude Code
-if ($TargetPlatform -eq "claude" -or $TargetPlatform -eq "both") {
+if ($targetPlatform -eq "claude" -or $targetPlatform -eq "both") {
     $claudeCommandsDir = Join-Path $userHome ".claude\commands"
     try {
         if (-not (Test-Path $claudeCommandsDir)) {
@@ -139,14 +125,14 @@ if ($TargetPlatform -eq "claude" -or $TargetPlatform -eq "both") {
             Get-ChildItem -Path $claudeCommandsSource -Filter "*.md" | ForEach-Object {
                 Copy-Item -Path $_.FullName -Destination (Join-Path $claudeCommandsDir $_.Name) -Force
             }
-            Write-Host "[✔] تم تثبيت أوامر Prompted في Claude Code بنجاح!" -ForegroundColor Green
+            Write-Host "[+] Claude Code: Prompted slash commands installed successfully!" -ForegroundColor Green
         }
     } catch {
-        Write-Host "[!] تحذير أثناء تثبيت Claude Code: $_" -ForegroundColor Yellow
+        Write-Host "[!] Warning while installing to Claude Code: $_" -ForegroundColor Yellow
     }
 }
 
-# Cleanup
+# Cleanup temporary files
 if ($tempDownloadDir -and (Test-Path $tempDownloadDir)) {
     Remove-Item -Path $tempDownloadDir -Recurse -Force -ErrorAction SilentlyContinue
 }
@@ -156,15 +142,15 @@ if ($tempZip -and (Test-Path $tempZip)) {
 
 Write-Host ""
 Write-Host "==============================================================" -ForegroundColor DarkGray
-Write-Host "🎉 تم التثبيت بنجاح! (Installation Completed Successfully)" -ForegroundColor Green
+Write-Host "[SUCCESS] Installation Complete!" -ForegroundColor Green
 Write-Host "==============================================================" -ForegroundColor DarkGray
-Write-Host "💡 للتشغيل الآن:" -ForegroundColor Cyan
-if ($TargetPlatform -eq "antigravity" -or $TargetPlatform -eq "both") {
-    Write-Host "  - في Google Antigravity: اكتب أمر /prompted" -ForegroundColor White
+Write-Host "How to use Prompted:" -ForegroundColor Cyan
+if ($targetPlatform -eq "antigravity" -or $targetPlatform -eq "both") {
+    Write-Host "  * In Google Antigravity: type /prompted" -ForegroundColor White
 }
-if ($TargetPlatform -eq "claude" -or $TargetPlatform -eq "both") {
-    Write-Host "  - في Claude Code: اكتب أمر /prompted" -ForegroundColor White
+if ($targetPlatform -eq "claude" -or $targetPlatform -eq "both") {
+    Write-Host "  * In Claude Code: type /prompted" -ForegroundColor White
 }
-Write-Host "  - من التيرمينال: node bin/prompted.js list" -ForegroundColor DarkCyan
+Write-Host "  * From Terminal: node bin/prompted.js list" -ForegroundColor DarkCyan
 Write-Host "==============================================================" -ForegroundColor DarkGray
 Write-Host ""
