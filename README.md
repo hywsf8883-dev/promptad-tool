@@ -5,11 +5,44 @@
 **Smart Prompt Loader, Optimizer & Autonomous Runner for Google Antigravity & Claude Code**  
 *أداة احترافية لإدارة البرومات الضخمة، تحسينها هندسياً، ترجمتها للإنجليزية، وتشغيلها ذاتياً عبر أمر `/prompted`.*
 
+[![GitHub Repo](https://img.shields.io/badge/GitHub-hywsf8883--dev%2Fpromptad--tool-blue.svg)](https://github.com/hywsf8883-dev/promptad-tool.git)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Antigravity%20%7C%20Claude%20Code-purple.svg)](#)
 [![Built-in Prompts](https://img.shields.io/badge/Prompts-1.2MB%2B%20Master%20Prompts-orange.svg)](#)
 
 </div>
+
+---
+
+## ⚡ أمر التثبيت المباشر بنقرة واحدة من GitHub (One-Line Installer)
+
+افتح التيرمينال ونفذ الأمر التالي مباشرة، وسيظهر لك خيار لتحديد بيئة العمل:
+
+### 🪟 على ويندوز (Windows PowerShell):
+```powershell
+irm https://raw.githubusercontent.com/hywsf8883-dev/promptad-tool/main/install.ps1 | iex
+```
+
+### 🍎 / 🐧 على ماك ولينكس (macOS / Linux):
+```bash
+curl -fsSL https://raw.githubusercontent.com/hywsf8883-dev/promptad-tool/main/install.sh | bash
+```
+
+### 🎯 القائمة التفاعلية التي ستظهر لك:
+```text
+==============================================================
+      🚀 Prompted Installer | مثبت أداة برومتد                
+    Repository: https://github.com/hywsf8883-dev/promptad-tool
+==============================================================
+
+اختر المنصة التي تريد تثبيت الأداة عليها:
+  [1] Google Antigravity فقط
+  [2] Claude Code فقط
+  [3] كلاهما معاً (Both Antigravity & Claude Code) - [موصى به]
+  [4] إلغاء (Cancel)
+
+أدخل رقم اختيارك (Enter choice) [1-4] (Default: 3):
+```
 
 ---
 
@@ -52,32 +85,6 @@
 
 ---
 
-## 🧩 المهارات المدمجة لـ Antigravity (Antigravity Skills)
-
-بالإضافة لأمر `/prompted` الشامل، تم تزويد المشروع بمهارات مخصصة جاهزة داخل `.agents/skills/`:
-- `skills/prompted/`: المحرك الأساسي للأمر `/prompted`.
-- `skills/discord-bot-expert/`: مهارة Antigravity لتطوير بوتات Discord المتطورة و Components V2.
-- `skills/discord-dashboard/`: مهارة بناء لوحات التحكم Web Dashboards مع OAuth2.
-- `skills/minecraft-modding/`: مهارة هندسة وتطوير مودات Minecraft لكافة المنصات.
-- `skills/code-diagnostician/`: مهارة التشخيص المباشر وتقديم الحلول البرمجية الكاملة.
-
----
-
-## ⚡ التثبيت السريع (Installation)
-
-### 🪟 على نظام ويندوز (Windows PowerShell):
-```powershell
-.\install.ps1
-```
-
-### 🍎 / 🐧 على ماك ولينكس (macOS / Linux):
-```bash
-chmod +x ./install.sh
-./install.sh
-```
-
----
-
 ## 💻 طريقة الاستخدام (How to Use)
 
 ### 1. في Google Antigravity:
@@ -109,92 +116,17 @@ node bin/prompted.js list
 
 # قراءة محتوى أي برومبت بالرقم أو الاسم
 node bin/prompted.js show 1
-
-# إضافة قالب برومبت جديد
-node bin/prompted.js add my-feature-prompt
 ```
 
 ---
 
-## ➕ كيفية إضافة برومبتاتك الخاصة (Add Your Own Prompts)
+## 📤 رفع التحديثات على GitHub
 
-ضع أي ملف `.md` داخل مجلد `prompts/`:
-```markdown
-# عنوان البرومبت الخاص بك
-
-وصف: سطر أو سطرين يشرحان وظيفة هذا البرومبت.
-
-## المطلوب
-- اكتب هنا أفكارك بالعربية أو بالعامية أو بأي لغة...
-```
-بمجرد حفظ الملف، سيظهر تلقائياً في قائمة `/prompted`!
-
----
-
-## 📤 كيفية رفع المشروع على GitHub (Push to GitHub)
-
-1. أنشئ مستودعاً جديداً فارغاً على GitHub باسم `prompted`.
-2. داخل مجلد المشروع، نفذ الأوامر التالية:
-
+المستودع مرتبط بـ `https://github.com/hywsf8883-dev/promptad-tool.git`:
 ```bash
-git init
 git add .
-git commit -m "feat: initial commit for prompted with master prompts library"
-git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/prompted.git
+git commit -m "feat: interactive installer with Antigravity and Claude Code selection"
 git push -u origin main
-```
-*(استبدل `YOUR_USERNAME` باسم المستخدم الخاص بك على GitHub).*
-
----
-
-## 📁 هيكل المستودع (Repository Structure)
-
-```text
-prompted/
-├── .agents/
-│   └── skills/
-│       ├── prompted/             # المحرك الرئيسي لأمر /prompted
-│       ├── discord-bot-expert/   # سكيل ديسكورد بوت
-│       ├── discord-dashboard/    # سكيل داشبورد ديسكورد
-│       ├── minecraft-modding/    # سكيل مودات ماينكرافت
-│       └── code-diagnostician/   # سكيل التشخيص البرمجي
-├── .claude/
-│   └── commands/
-│       ├── prompted.md           # أمر /prompted لـ Claude Code
-│       ├── discord-bot.md        # أمر /discord-bot لـ Claude Code
-│       ├── discord-dashboard.md  # أمر /discord-dashboard لـ Claude Code
-│       ├── minecraft-modding.md  # أمر /minecraft-modding لـ Claude Code
-│       └── diagnose.md           # أمر /diagnose لـ Claude Code
-├── plugins/
-│   └── prompted/                 # حزمة إضافة Antigravity الرسمية
-│       ├── plugin.json
-│       ├── README.md
-│       └── skills/
-├── prompts/                      # مكتبة البرومات الشاملة (1.2MB+)
-│   ├── README.md
-│   ├── discord-mega-expert-ultimate-prompt.md
-│   ├── discord-mega-expert-prompt.md
-│   ├── discord-bot-expert-prompt.md
-│   ├── discord-dashboard-prompt.md
-│   ├── discord-dashboard-complete-guide2.md
-│   ├── components-v2-full-guide.md
-│   ├── discord-image-ultimate.md
-│   ├── discord-image-expert-v2.md
-│   ├── discord-image-drawing-prompt.md
-│   ├── minecraft-modding-expert-prompt.md
-│   └── prompt.md
-├── bin/
-│   └── prompted.js               # أداة التيرمينال التفاعلية
-├── scripts/
-│   ├── list-prompts.ps1 / .sh    # سكربتات فحص وسرد البرومات
-│   └── get-prompt.ps1 / .sh      # سكربتات جلب محتوى البرومات
-├── install.ps1                   # سكربت التثبيت السريع لويندوز
-├── install.sh                    # سكربت التثبيت السريع للينكس وماك
-├── uninstall.ps1 / .sh           # سكربت إلغاء التثبيت
-├── package.json                  # حزمة Node.js
-├── README.md                     # التوثيق الشامل
-└── LICENSE                       # ترخيص MIT
 ```
 
 ---
