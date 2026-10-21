@@ -80,7 +80,17 @@ if (Test-Path $sourcePromptsDir) {
     Write-Host "[+] Global prompts library configured at: $globalPromptsDir" -ForegroundColor Green
 }
 
-# 2. Install for Google Antigravity
+# 2. Setup Global CLI Command (prompted)
+try {
+    $npmDir = Join-Path $env:APPDATA "npm"
+    if (Test-Path $npmDir) {
+        $cmdContent = "@ECHO off`nIF EXIST `"%USERPROFILE%\.gemini\antigravity\scratch\prompted\bin\prompted.js`" (`n  node `"%USERPROFILE%\.gemini\antigravity\scratch\prompted\bin\prompted.js`" %*`n) ELSE IF EXIST `"$sourceDir\bin\prompted.js`" (`n  node `"$sourceDir\bin\prompted.js`" %*`n) ELSE (`n  node bin\prompted.js %*`n)"
+        Set-Content -Path (Join-Path $npmDir "prompted.cmd") -Value $cmdContent -Force
+        Write-Host "[+] Global CLI command 'prompted' registered in PATH!" -ForegroundColor Green
+    }
+} catch {}
+
+# 3. Install for Google Antigravity
 if ($targetPlatform -eq "antigravity" -or $targetPlatform -eq "both") {
     $geminiConfigDir = Join-Path $userHome ".gemini\config"
     $geminiPluginsDir = Join-Path $geminiConfigDir "plugins\prompted"
@@ -113,7 +123,7 @@ if ($targetPlatform -eq "antigravity" -or $targetPlatform -eq "both") {
     }
 }
 
-# 3. Install for Claude Code
+# 4. Install for Claude Code
 if ($targetPlatform -eq "claude" -or $targetPlatform -eq "both") {
     $claudeCommandsDir = Join-Path $userHome ".claude\commands"
     try {
@@ -145,12 +155,8 @@ Write-Host "==============================================================" -For
 Write-Host "[SUCCESS] Installation Complete!" -ForegroundColor Green
 Write-Host "==============================================================" -ForegroundColor DarkGray
 Write-Host "How to use Prompted:" -ForegroundColor Cyan
-if ($targetPlatform -eq "antigravity" -or $targetPlatform -eq "both") {
-    Write-Host "  * In Google Antigravity: type /prompted" -ForegroundColor White
-}
-if ($targetPlatform -eq "claude" -or $targetPlatform -eq "both") {
-    Write-Host "  * In Claude Code: type /prompted" -ForegroundColor White
-}
-Write-Host "  * From Terminal: node bin/prompted.js list" -ForegroundColor DarkCyan
+Write-Host "  * From Any Terminal:  prompted list" -ForegroundColor Yellow
+Write-Host "  * In Antigravity:     type /prompted (in the chat)" -ForegroundColor White
+Write-Host "  * In Claude Code:     type /prompted (in the chat)" -ForegroundColor White
 Write-Host "==============================================================" -ForegroundColor DarkGray
 Write-Host ""

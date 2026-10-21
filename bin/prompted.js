@@ -70,21 +70,21 @@ switch (command) {
   case 'ls': {
     const list = getAllPrompts();
     console.log('\n\x1b[1;36m==============================================================\x1b[0m');
-    console.log('\x1b[1;36m🚀 Prompted Library - Available Master Prompts:\x1b[0m');
+    console.log('\x1b[1;36m  Prompted Library - Available Master Prompts:\x1b[0m');
     console.log('\x1b[1;36m==============================================================\x1b[0m');
     list.forEach((item, index) => {
       console.log(`\x1b[1;32m[${index + 1}] ${item.file}\x1b[0m \x1b[90m(${item.sizeKb} KB)\x1b[0m`);
       console.log(`    \x1b[1;37mTitle: ${item.title}\x1b[0m`);
       console.log(`    \x1b[90mDesc:  ${item.desc}\x1b[0m\n`);
     });
-    console.log(`\x1b[33m💡 In Antigravity or Claude Code, type: /prompted <filename-or-number>\x1b[0m\n`);
+    console.log(`\x1b[33m💡 In Antigravity or Claude Code chat, type: /prompted <filename-or-number>\x1b[0m\n`);
     break;
   }
 
   case 'show':
   case 'get': {
     if (!target) {
-      console.error('\x1b[31mError: Please specify prompt name or index (e.g. prompted show 1 or prompted show discord-mega)\x1b[0m');
+      console.error('\x1b[31mError: Please specify prompt name or index (e.g. prompted show 1 or prompted show discord)\x1b[0m');
       process.exit(1);
     }
     const list = getAllPrompts();
@@ -141,10 +141,10 @@ switch (command) {
 Prompted CLI - Smart Prompt Manager for Antigravity & Claude Code
 
 Commands:
-  node bin/prompted.js list             List all available prompt files
-  node bin/prompted.js show <name|idx>  Display the contents of a prompt
-  node bin/prompted.js add <name>       Create a new prompt template
-  node bin/prompted.js help             Show this help screen
+  prompted list             List all available prompt files
+  prompted show <name|idx>  Display the contents of a prompt
+  prompted add <name>       Create a new prompt template
+  prompted help             Show this help screen
 `);
     break;
   }
