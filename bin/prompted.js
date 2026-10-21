@@ -16,50 +16,103 @@ const userHome = os.homedir();
 const promptDirs = [
   path.join(process.cwd(), 'prompts'),
   path.join(__dirname, '..', 'prompts'),
+  path.join(userHome, '.gemini', 'antigravity', 'scratch', 'prompted', 'prompts'),
   path.join(userHome, '.prompted', 'prompts')
 ];
+
+const KNOWN_METADATA = {
+  'components-v2-full-guide.md': {
+    title: 'Discord.js Components V2 - Complete Migration Guide',
+    desc: 'Transform standard Embeds into modern interactive Components V2 with full layout control.'
+  },
+  'discord-bot-expert-prompt.md': {
+    title: 'Discord & Telegram Bot Expert (Node.js & discord.js v14+)',
+    desc: 'Complete production bot architecture, handlers, slash commands, Canvas, and databases.'
+  },
+  'discord-dashboard-complete-guide2.md': {
+    title: 'Discord Bot Web Dashboard - Complete Architecture Guide',
+    desc: 'Responsive HTML/CSS/JavaScript dashboard, live stats, WebSocket telemetry, and OAuth2.'
+  },
+  'discord-dashboard-prompt.md': {
+    title: 'Discord Bot Web Dashboard & OAuth2 Specialist',
+    desc: 'Discord OAuth2 authentication, guild management, permissions, and backend integration.'
+  },
+  'discord-image-drawing-prompt.md': {
+    title: 'Discord Image & Canvas Drawing Expert',
+    desc: 'Server-side graphic rendering using @napi-rs/canvas, Skia-Canvas, Sharp, and Jimp.'
+  },
+  'discord-image-expert-v2.md': {
+    title: 'Discord Image & Graphics Generator (V2 Advanced)',
+    desc: 'Welcome banners, rank cards, level cards, and automated graphic generation systems.'
+  },
+  'discord-image-ultimate.md': {
+    title: 'Discord Image & Graphics Suite - Ultimate Edition',
+    desc: 'Comprehensive visual engine for cards, leaderboards, statistics, and canvas animations.'
+  },
+  'discord-mega-expert-prompt.md': {
+    title: 'Discord Mega Expert (Unified Bot & Full Systems)',
+    desc: 'End-to-end bot systems: moderation, economy, leveling, mini-games, and voice.'
+  },
+  'discord-mega-expert-ultimate-prompt.md': {
+    title: 'Discord & Telegram Mega Expert - Ultimate Master Suite (510 KB)',
+    desc: '14,000+ line master reference: every event, permission, handler, database, and library.'
+  },
+  'minecraft-modding-expert-prompt.md': {
+    title: 'Minecraft Modding Master (Fabric, NeoForge, Forge, Java 21)',
+    desc: 'Complete Java Edition modding: blocks, entities, biomes, recipes, and Blockbench models.'
+  },
+  'prompt.md': {
+    title: 'Universal Code Diagnostician (Direct Code & Root-Cause Mode)',
+    desc: 'Direct root-cause diagnosis and immediate production-ready bug fixes in any programming language.'
+  }
+};
 
 function getAllPrompts() {
   const prompts = new Map();
   for (const dir of promptDirs) {
     if (fs.existsSync(dir)) {
-      const files = fs.readdirSync(dir);
-      for (const file of files) {
-        if (file.endsWith('.md') && file !== 'README.md' && !prompts.has(file)) {
-          const fullPath = path.join(dir, file);
-          const stat = fs.statSync(fullPath);
-          const content = fs.readFileSync(fullPath, 'utf8');
-          const lines = content.split('\n').slice(0, 20);
-
-          let title = '';
-          const titleLine = lines.find(l => /^#\s+/.test(l));
-          if (titleLine) {
-            title = titleLine.replace(/^#\s+/, '').trim();
-          } else if (file === 'prompt.md') {
-            title = 'Universal Code Diagnostician (Direct Code & Root-Cause Mode)';
-          } else {
-            title = file;
+      try {
+        const files = fs.readdirSync(dir);
+        for (const file of files) {
+          // Ignore non-markdown and ignore old starter templates 01-xx
+          if (!file.endsWith('.md') || file === 'README.md' || /^0\d-.*\.md$/i.test(file)) {
+            continue;
           }
+          if (!prompts.has(file)) {
+            const fullPath = path.join(dir, file);
+            const stat = fs.statSync(fullPath);
+            const content = fs.readFileSync(fullPath, 'utf8');
 
-          let desc = '';
-          const descLine = lines.find(l => /^(وصف|description):\s*/i.test(l));
-          if (descLine) {
-            desc = descLine.replace(/^(وصف|description):\s*/i, '').trim();
-          } else {
-            const subHeader = lines.find(l => /^##\s+[^#\s]/.test(l));
-            if (subHeader) {
-              desc = subHeader.replace(/^##\s+/, '').trim();
-            } else if (file === 'prompt.md') {
-              desc = 'Direct diagnosis and immediate production-ready complete code across all languages.';
+            let title = '';
+            let desc = '';
+
+            if (KNOWN_METADATA[file]) {
+              title = KNOWN_METADATA[file].title;
+              desc = KNOWN_METADATA[file].desc;
             } else {
-              desc = 'Comprehensive master prompt template.';
-            }
-          }
+              const lines = content.split('\n').slice(0, 20);
+              const titleLine = lines.find(l => /^#\s+/.test(l));
+              if (titleLine) {
+                const raw = titleLine.replace(/^#\s+/, '').trim();
+                const paren = raw.match(/\(([^)]*[a-zA-Z]{3,}[^)]*)\)/);
+                title = paren ? paren[1].trim() : raw.replace(/[\u0600-\u06FF]/g, '').trim() || file;
+              } else {
+                title = file;
+              }
 
-          const sizeKb = (stat.size / 1024).toFixed(1);
-          prompts.set(file, { file, fullPath, title, desc, sizeKb, content });
+              const descLine = lines.find(l => /^(وصف|description):\s*/i.test(l));
+              if (descLine) {
+                desc = descLine.replace(/^(وصف|description):\s*/i, '').trim();
+              } else {
+                desc = 'Comprehensive master prompt template.';
+              }
+            }
+
+            const sizeKb = (stat.size / 1024).toFixed(1);
+            prompts.set(file, { file, fullPath, title, desc, sizeKb, content });
+          }
         }
-      }
+      } catch (e) {}
     }
   }
   return Array.from(prompts.values()).sort((a, b) => a.file.localeCompare(b.file));
