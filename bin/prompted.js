@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 /**
- * Prompted CLI
- * Interactive prompt manager & optimizer for Antigravity & Claude Code
+ * Prompted CLI — Smart Prompt Manager & Autonomous Optimizer
+ * Supports Smart Keyword Matching, Search, and Multi-Agent Synthesis
  */
 
 const fs = require('fs');
@@ -10,7 +10,7 @@ const path = require('path');
 const os = require('os');
 
 const command = process.argv[2] || 'list';
-const target = process.argv[3];
+const query = process.argv.slice(3).join(' ');
 
 const userHome = os.homedir();
 const promptDirs = [
@@ -21,6 +21,36 @@ const promptDirs = [
 ];
 
 const KNOWN_METADATA = {
+  // New 7 Specialized Prompts
+  'token-optimizer-ultra-lean.md': {
+    title: 'Token Optimizer & Ultra-Lean Directive (80-240 lines)',
+    desc: 'Max token efficiency (50-75% reduction), zero-fluff, dense reasoning, and optimal context preservation.'
+  },
+  'design-innovation-davinci-ui.md': {
+    title: 'Da Vinci UI/UX Innovation Engine (70-140 lines)',
+    desc: 'Visual innovation directory: Da Vinci color harmonies, 3D web assets, and elite free UI inspiration links.'
+  },
+  'discord-bot-modern-architecture.md': {
+    title: 'Modern Discord Bot Architecture (2025/2026 Core)',
+    desc: 'Latest discord.js v14.19+ updates, Autocomplete, modern Interaction handlers, Subcommands, and Sweepers.'
+  },
+  'discord-bot-nextgen-components.md': {
+    title: 'Next-Gen Components V2 & Advanced Interactions',
+    desc: 'Modern layout primitives: ContainerBuilder, SectionBuilder, MediaGalleries, and interactive Modals.'
+  },
+  'discord-bot-visual-aesthetics.md': {
+    title: 'Discord Bot Visual Aesthetics & Micro-UI Design',
+    desc: 'Visual hierarchy, dark-theme color accents (Blurple, Emerald, Dark Slate), status badges, and dividers.'
+  },
+  'discord-bot-interactive-ui-cards.md': {
+    title: 'Interactive Discord UI Cards & Widget Systems',
+    desc: 'Pagination engines, live music controllers, ticket widgets, shop grids, and collector timeouts.'
+  },
+  'master-project-auditor-synthesizer.md': {
+    title: 'Master Project Auditor & Holistic Synthesizer',
+    desc: 'Comprehensive QA auditor verifying tokens, Da Vinci visuals, Discord architecture, security, and tests.'
+  },
+  // Core Master Prompts
   'components-v2-full-guide.md': {
     title: 'Discord.js Components V2 - Complete Migration Guide',
     desc: 'Transform standard Embeds into modern interactive Components V2 with full layout control.'
@@ -74,7 +104,6 @@ function getAllPrompts() {
       try {
         const files = fs.readdirSync(dir);
         for (const file of files) {
-          // Ignore non-markdown and ignore old starter templates 01-xx
           if (!file.endsWith('.md') || file === 'README.md' || /^0\d-.*\.md$/i.test(file)) {
             continue;
           }
@@ -123,81 +152,80 @@ switch (command) {
   case 'ls': {
     const list = getAllPrompts();
     console.log('\n\x1b[1;36m==============================================================\x1b[0m');
-    console.log('\x1b[1;36m  Prompted Library - Available Master Prompts:\x1b[0m');
+    console.log('\x1b[1;36m  🚀 Prompted Library - 18 Master Prompts Ready:\x1b[0m');
     console.log('\x1b[1;36m==============================================================\x1b[0m');
     list.forEach((item, index) => {
       console.log(`\x1b[1;32m[${index + 1}] ${item.file}\x1b[0m \x1b[90m(${item.sizeKb} KB)\x1b[0m`);
       console.log(`    \x1b[1;37mTitle: ${item.title}\x1b[0m`);
       console.log(`    \x1b[90mDesc:  ${item.desc}\x1b[0m\n`);
     });
-    console.log(`\x1b[33m💡 In Antigravity or Claude Code chat, type: /prompted <filename-or-number>\x1b[0m\n`);
+    console.log(`\x1b[33m💡 In Antigravity or Claude Code chat, type: /prompted <query or number>\x1b[0m\n`);
+    break;
+  }
+
+  case 'search':
+  case 'find':
+  case 'match': {
+    if (!query) {
+      console.error('\x1b[31mError: Please specify keyword (e.g. prompted search token or prompted search discord)\x1b[0m');
+      process.exit(1);
+    }
+    const list = getAllPrompts();
+    const terms = query.toLowerCase().split(/\s+/);
+    const matches = list.filter(item => {
+      const haystack = (item.file + ' ' + item.title + ' ' + item.desc + ' ' + item.content).toLowerCase();
+      return terms.some(term => haystack.includes(term));
+    });
+
+    console.log(`\n\x1b[1;36m🔍 Smart Keyword Search Results for: "${query}"\x1b[0m`);
+    console.log('\x1b[90m==============================================================\x1b[0m');
+    if (matches.length === 0) {
+      console.log('\x1b[33mNo matching prompt found for this query.\x1b[0m\n');
+    } else {
+      matches.forEach((item, index) => {
+        console.log(`\x1b[1;32m[${index + 1}] ${item.file}\x1b[0m \x1b[90m(${item.sizeKb} KB)\x1b[0m`);
+        console.log(`    \x1b[1;37mTitle: ${item.title}\x1b[0m`);
+        console.log(`    \x1b[90mDesc:  ${item.desc}\x1b[0m\n`);
+      });
+    }
     break;
   }
 
   case 'show':
   case 'get': {
-    if (!target) {
-      console.error('\x1b[31mError: Please specify prompt name or index (e.g. prompted show 1 or prompted show discord)\x1b[0m');
+    if (!query) {
+      console.error('\x1b[31mError: Please specify prompt name or index (e.g. prompted show 1 or prompted show token)\x1b[0m');
       process.exit(1);
     }
     const list = getAllPrompts();
     let found = null;
-    if (/^\d+$/.test(target)) {
-      const idx = parseInt(target, 10) - 1;
+    if (/^\d+$/.test(query.trim())) {
+      const idx = parseInt(query.trim(), 10) - 1;
       if (idx >= 0 && idx < list.length) {
         found = list[idx];
       }
     } else {
-      found = list.find(item => item.file.toLowerCase().includes(target.toLowerCase()));
+      found = list.find(item => item.file.toLowerCase().includes(query.toLowerCase()));
     }
     if (found) {
       console.log(found.content);
     } else {
-      console.error(`\x1b[31mError: Prompt '${target}' not found.\x1b[0m`);
+      console.error(`\x1b[31mError: Prompt '${query}' not found.\x1b[0m`);
       process.exit(1);
     }
-    break;
-  }
-
-  case 'add':
-  case 'new': {
-    if (!target) {
-      console.error('\x1b[31mError: Please provide a filename (e.g. prompted add my-prompt)\x1b[0m');
-      process.exit(1);
-    }
-    const filename = target.endsWith('.md') ? target : `${target}.md`;
-    const targetDir = path.join(process.cwd(), 'prompts');
-    if (!fs.existsSync(targetDir)) {
-      fs.mkdirSync(targetDir, { recursive: true });
-    }
-    const filePath = path.join(targetDir, filename);
-    if (fs.existsSync(filePath)) {
-      console.error(`\x1b[31mError: File ${filename} already exists in ./prompts\x1b[0m`);
-      process.exit(1);
-    }
-    const template = `# ${target}
-
-وصف: وصف مختصر للبرومبت هنا
-
-## الأهداف والتعليمات
-1. الخطوة الأولى...
-2. الخطوة الثانية...
-`;
-    fs.writeFileSync(filePath, template, 'utf8');
-    console.log(`\x1b[32m✔ Created new prompt template at:\x1b[0m ${filePath}`);
     break;
   }
 
   case 'help':
   default: {
     console.log(`
-Prompted CLI - Smart Prompt Manager for Antigravity & Claude Code
+Prompted CLI — Smart Prompt Manager & Autonomous Optimizer
 
 Commands:
-  prompted list             List all available prompt files
-  prompted show <name|idx>  Display the contents of a prompt
-  prompted add <name>       Create a new prompt template
-  prompted help             Show this help screen
+  prompted list                 List all 18 master prompts
+  prompted search <keyword>     Smart keyword search across prompts
+  prompted show <name|idx>      Display full contents of a prompt
+  prompted help                 Show this help screen
 `);
     break;
   }

@@ -1,48 +1,33 @@
 ---
-description: Discover, enhance, translate, and autonomously execute prompts from your prompts library.
+description: Intelligent prompt engine with Smart Context & Keyword Matching for autonomous code generation.
 ---
 
-You are executing the **Prompted (برومتد)** workflow. Follow these instructions precisely:
+You are executing the **Prompted (برومتد) Smart Engine**. Follow these instructions precisely:
 
-## 1. Locate the Prompts Library
-Check the following locations for `.md` prompt files:
-1. Workspace directory: `./prompts/`
-2. Global library: `~/.prompted/prompts/` (or `$USERPROFILE/.prompted/prompts` on Windows)
+## 1. Analyze Mode & Arguments
+User input: `$ARGUMENTS`
 
-## 2. Identify Target Prompt
-User argument: `$ARGUMENTS`
+- **Scenario A: Direct File/Number** (e.g. `/prompted 1`, `/prompted components-v2`):
+  Load that specific prompt file from `./prompts/` or `~/.prompted/prompts/`. Proceed to Step 3.
 
-- **If `$ARGUMENTS` is provided**:
-  Search for the matching prompt file (by exact filename, number prefix, or keyword match).
-  Example: if argument is `feature-builder` or `1`, select `01-feature-builder.md`.
+- **Scenario B: Smart Keyword & Context Matching Mode (الوضع الذكي)**:
+  Triggered when `$ARGUMENTS` contains natural language requirements (e.g. `/prompted build a music bot with lean tokens`), OR when `/prompted` has no argument but previous chat messages contain user requirements.
+  1. Extract core keywords: `discord`, `components v2`, `ui design`, `davinci colors`, `lean tokens`, `minecraft`, `audit`.
+  2. Scan the prompt library and retrieve the most relevant prompt template(s).
+  3. Synthesize the requirements: fuse best architectural practices, zero-placeholder rules, and visual aesthetics from the matched templates.
+  4. Proceed directly to Step 3 & 4.
 
-- **If `$ARGUMENTS` is empty**:
-  Scan and list all `.md` files in the prompts directory (ignoring `README.md`).
-  Display them to the user in a clean table:
-  | # | File Name | Title | Summary |
-  |---|-----------|-------|---------|
-  Ask the user: "Which prompt would you like me to enhance and execute? (Reply with name or number)"
-  Pause and wait for user selection before proceeding to Step 3.
+- **Scenario C: Interactive Catalog**:
+  Triggered ONLY if `$ARGUMENTS` is empty AND no project context exists in the chat.
+  List all available prompts in a clean table and prompt the user to choose.
 
-## 3. Read, Summarize & Enhance the Prompt
-Once the target prompt is selected:
-1. Read the full content of the prompt file.
-2. Formulate a crisp 1-2 sentence **Summary** of its intent in Arabic / English.
-3. **Enhance and Translate** the prompt into world-class English Prompt Engineering standard:
-   - **Role & Persona**: Define an elite specialist (e.g., Principal Software Architect, Senior Security Engineer).
-   - **Context & Objective**: Define the precise goals in this workspace.
-   - **Strict Engineering Rules**: Enforce clean architecture, zero placeholders, robust error handling, test coverage, and modularity.
-   - **Step-by-Step Execution Plan**: Clear actionable phases.
-4. Display the summary and the enhanced English directive clearly:
-   ```markdown
-   ### 📋 Prompt Summary (ملخص البرومبت)
-   > [Brief summary]
+## 2. Locate Prompt Files
+Check `./prompts/` and `~/.prompted/prompts/`.
 
-   ### ⚡ Enhanced English Directive
-   ```text
-   [Refined English prompt]
-   ```
-   ```
+## 3. Summarize & Synthesize English Directive
+1. Summarize the matched domain and goals in 1-2 bullet points.
+2. Formulate a crisp, production-grade English engineering directive embodying all rules.
+3. Display the summary and directive to the user.
 
-## 4. Autonomous Execution ("يبعته لنفسه ويشتغل")
-**CRITICAL**: Do NOT ask the user for confirmation. Immediately adopt the enhanced prompt as your active instruction and begin executing Phase 1 in the workspace right away!
+## 4. Autonomous Execution ("يبدأ يشتغل بيه ويعمل كود الأفضل")
+**CRITICAL**: Do NOT ask the user for confirmation. Immediately adopt the directive as your active working instructions and begin building and outputting the complete, production-ready code in the workspace right away!
