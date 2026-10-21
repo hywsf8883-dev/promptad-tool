@@ -1,0 +1,11 @@
+{
+  "name": "prompted",
+  "displayName": "Prompted (برومتد)",
+  "description": "Smart prompt loader & optimizer with built-in master suites for Discord bots, Dashboards, Minecraft modding, and universal code diagnosis.",
+  "version": "1.0.0",
+  "suggestedPrompts": [
+    "/prompted",
+    "/prompted discord-mega-expert-ultimate-prompt",
+    "/prompted minecraft-modding-expert-prompt"
+  ]
+}

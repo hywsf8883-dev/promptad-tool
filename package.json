@@ -1,0 +1,26 @@
+{
+  "name": "prompted",
+  "version": "1.0.0",
+  "description": "Smart prompt loader & optimizer for Google Antigravity & Claude Code",
+  "main": "bin/prompted.js",
+  "bin": {
+    "prompted": "./bin/prompted.js"
+  },
+  "scripts": {
+    "start": "node bin/prompted.js",
+    "list": "node bin/prompted.js list",
+    "install:win": "powershell -ExecutionPolicy Bypass -File ./install.ps1",
+    "install:unix": "bash ./install.sh"
+  },
+  "keywords": [
+    "antigravity",
+    "claude-code",
+    "prompt-engineering",
+    "prompts",
+    "ai-agent",
+    "skills",
+    "automation"
+  ],
+  "author": "",
+  "license": "MIT"
+}
